@@ -4,6 +4,10 @@ const ReceiverUrl = 'http://18.217.146.148:3000/api/Receiver';
 const reportUrl = 'http://18.217.146.148:3000/api/CreateDisaster';
 const AcceptedSendSupplyUrl = 'http://18.217.146.148:3000/api/AcceptedSendSupply';
 
+var activeDisasters = [];
+var storeSupplies = [];
+var receivers = [];
+
 $(document).ready(function () {
     setInterval(function () {
         console.log("check is on...");
@@ -13,16 +17,25 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.length > 0) {
                     console.log(data.length + " disaster detected!")
+                    for (var i = 0; i < data.length; i++) {
+                        activeDisasters[i] = data[i].disasterId;
+                    }
                     $.ajax({
                         url: StoreSupplyUrl,
                         type: "GET",
                         success: function (data) {
                             console.log(data.length + " supplies detected!");
+                            for (var i = 0; i < data.length; i++) {
+                                storeSupplies[i] = data[i].supplyId;
+                            }
                             $.ajax({
                                 url: ReceiverUrl,
                                 type: "GET",
                                 success: function (data) {
                                     console.log(data.length + " receivers found!");
+                                    for (var i = 0; i < data.length; i++) {
+                                        receivers[i] = data[i].orgId;
+                                    }
                                     openSendForm();
                                 },
                                 error: function (error) {
@@ -44,7 +57,7 @@ $(document).ready(function () {
                 console.log(error);
             }
         })
-    }, 10000);
+    }, 5000);
 
     $('#report-form').submit(function () {
         var tst = sumbitReport();
@@ -60,12 +73,11 @@ $(document).ready(function () {
             error: function (error) {
                 console.log(error)
             },
-            complete: function(status, error){
+            complete: function (status, error) {
                 closeReportForm();
-                if(status.status != 200){
+                if (status.status != 200) {
                     alert(status.responseText);
-                }
-                else{
+                } else {
                     alert("disaster reported successfuly!");
                 }
             }
@@ -86,12 +98,11 @@ $(document).ready(function () {
             error: function (error) {
                 console.log(error);
             },
-            complete: function(status, error){
+            complete: function (status, error) {
                 closeSendForm();
-                if(status.status != 200){
+                if (status.status != 200) {
                     alert(status.responseText);
-                }
-                else{
+                } else {
                     alert("supply sent successfuly!");
                 }
             }
@@ -110,6 +121,29 @@ function closeReportForm() {
 
 function openSendForm() {
     document.getElementById("mySendForm").style.display = "block";
+    var disasterOptions = document.getElementById("disaster-drop");
+    var receiverOptions = document.getElementById("receiver-drop");
+    var supplyOptions = document.getElementById("supply-drop");
+    for (var i = 0; i < 20; i++) {
+        disasterOptions.remove(disasterOptions);
+        receiverOptions.remove(receiverOptions);
+        supplyOptions.remove(supplyOptions);
+    }
+    for (var i = 0; i < activeDisasters.length; i++) {
+        var option = document.createElement("option");
+        option.text = activeDisasters[i];
+        disasterOptions.add(option);
+    }
+    for (var i = 0; i < receivers.length; i++) {
+        var option = document.createElement("option");
+        option.text = receivers[i];
+        receiverOptions.add(option);
+    }
+    for (var i = 0; i < storeSupplies.length; i++) {
+        var option = document.createElement("option");
+        option.text = storeSupplies[i];
+        supplyOptions.add(option);
+    }
 }
 
 function closeSendForm() {
