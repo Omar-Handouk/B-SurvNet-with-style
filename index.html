@@ -21,19 +21,65 @@
 	<!-- Header -->
 	<header id="header">
 		<div class="logo"><a href="#">B-SurvNet <span>Call For Code</span></a></div>
-		<a href="#">
-			<button type="button" class="btn btn-outline-dark btn-lg btn-report" style="
-		margin-bottom: 50px;
-		height: 119.33333999999999px;
-		width: 636.6666px;
-	font-size:50px;font-weight:bold;">Report Disaster</button></a>
-		<a href="#">
-			<button type="button" class="btn btn-outline-success btn-lg" style="
+
+		<div class="form-popup" id="mySendForm">
+			<form class="form-container" id="send-form">
+				<h1>Disaster detected !</h1>
+				<h2>requested send supply transaction</h2>
+
+				<label for="disasterId"><b>Disaster Id</b></label>
+				<input type="text" placeholder="Enter disaster ID" name="disasterId" required>
+
+				<label for="receiverId"><b>Receiver Id</b></label>
+				<input type="text" placeholder="Enter receiver ID" name="receiverId" required>
+
+				<label for="deviceId"><b>Device Id</b></label>
+				<input type="text" placeholder="Enter device ID" name="deviceId" required>
+
+				<label for="supplyId"><b>Supply Id</b></label>
+				<input type="text" placeholder="Enter Supply ID" name="supplyId" required>
+
+				<label for="amount"><b>Supply Amount</b></label>
+				<input type="text" placeholder="Enter amount of supplies" name="amount" required>
+				
+				<button type="submit" class="btn btn-report">Send Supply</button>
+				<button type="button" class="btn cancel" onclick="closeSendForm()">Reject</button>
+			</form>
+		</div>
+
+
+
+		<button type="button" onclick="openReportForm()" class="btn btn-outline-dark btn-lg report-open-button" style="
+			margin-bottom: 50px;
+			height: 119.33333999999999px;
+			width: 636.6666px;
+		font-size:50px;font-weight:bold;">
+			Report Disaster</button>
+
+		<button type="button" class="btn btn-outline-primary btn-lg" style="
 				margin-bottom: 50px;
 				height: 119.33333999999999px;
 				width: 636.6666px;
-			font-size:50px;font-weight:bold;">Dashboard</button></a>
+			font-size:50px;font-weight:bold;">Dashboard</button>
 	</header>
+
+	<div class="form-popup" id="myReportForm">
+		<form class="form-container" id="report-form">
+			<h1>Report Disaster</h1>
+
+			<label for="disasterId"><b>Disaster Id</b></label>
+			<input type="text" placeholder="Enter disaster ID" name="disasterId" required>
+
+			<label for="location"><b>Location</b></label>
+			<input type="text" placeholder="Enter disaster location" name="location" required>
+
+			<label for="disasterType"><b>Disaster Type</b></label>
+			<input type="text" placeholder="Enter disaster type" name="disasterType" required>
+
+			<button type="submit" class="btn btn-report">Report</button>
+			<button type="button" class="btn cancel" onclick="closeReportForm()">Close</button>
+		</form>
+	</div>
 
 
 	<!-- Main -->
@@ -141,7 +187,7 @@
 			</ul>
 		</div>
 		<div class="copyright">
-			&copy; Untitled. All rights reserved. Images <a href="https://unsplash.com">Unsplash</a> Design <a href="https://templated.co">TEMPLATED</a>
+			&copy; Untitled. All rights reserved.
 		</div>
 	</footer>
 
