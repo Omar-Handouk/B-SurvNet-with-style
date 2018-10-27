@@ -81,6 +81,7 @@
 			<input type="text" placeholder="Enter disaster ID" name="disasterId" required>
 
 			<label for="location"><b>Location</b></label>
+			<div id="report-map" style="width: 90%; height: 300px; margin:auto;"></div>
 			<input type="text" placeholder="Enter disaster location" name="location" required>
 
 			<label for="disasterType"><b>Disaster Type</b></label>
@@ -208,6 +209,22 @@
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script src="assets/js/logic.js"></script>
+
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCj9B_lUMBxSpH4xamTurUOMNi9daqrjsU&callback=initialize"></script>
+	<script>
+		var mapProp = {
+			center: new google.maps.LatLng(26.8350261, 26.3846187),
+			zoom: 5,
+		};
+		var map = new google.maps.Map(document.getElementById("report-map"), mapProp);
+		
+		google.maps.event.addListener(map, 'click', function (event) {
+			alert("Disaster location is set to: " + event.latLng);
+			var tstStr = String(event.latLng);
+			tstStr = tstStr.match(/\((.*?)\)/)[1];
+			document.getElementById('report-form').elements['location'].value = tstStr;
+		});
+	</script>
 
 </body>
 
