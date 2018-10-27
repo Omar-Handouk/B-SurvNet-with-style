@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <title>B-SurvNet</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="logo"><a href="./index.html">B-SurvNet <span>Call For Code</span></a></div>
+    </header>
+
+
+    <!-- Main -->
+    <section id="main">
+        <div class="inner">
+
+            <!-- One -->
+            <section id="one" class="wrapper style1">
+
+                <header class="special">
+                    <h2>DashBoard</h2>
+                    <p>Real-Time location of present and previous disasters</p>
+                    <div id="disaster-map" style="width: 100%; height: 600px;"></div>
+                </header>
+            </section>
+
+            <!-- Two -->
+            <section id="two" class="wrapper style2">
+                <header>
+                    <h2>Supply Status</h2>
+                    <p>know everything about our network</p>
+                </header>
+                <div class="content">
+                    <div class="gallery">
+                        <div>
+                            <div>
+                                <div style="width: 100%; height: 300px; background-color: white;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <div style="width: 100%; height: 300px; background-color: red;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <div style="width: 100%; height: 300px; background-color: red;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <div style="width: 100%; height: 300px; background-color: white;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Three -->
+            <section id="three" class="wrapper">
+                <div class="spotlight">
+                    <div class="image flush"><img src="CFCimages/pic6.jpg" alt="" /></div>
+                    <div class="inner">
+                        <h3>Automated Solution</h3>
+                        <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
+                            Vestibulum porttitor
+                            nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
+                            commodo pulvinar dui,
+                            at cursus metus imperdiet vel.</p>
+                    </div>
+                </div>
+                <div class="spotlight alt">
+                    <div class="image flush"><img src="CFCimages/pic26.jpg" alt="" /></div>
+                    <div class="inner">
+                        <h3>End-to-End Tracking</h3>
+                        <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
+                            Vestibulum porttitor
+                            nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
+                            commodo pulvinar dui,
+                            at cursus metus imperdiet vel.</p>
+                    </div>
+                </div>
+                <div class="spotlight">
+                    <div class="image flush"><img src="CFCimages/pic27.jpg" alt="" /></div>
+                    <div class="inner">
+                        <h3>Chatbot</h3>
+                        <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
+                            Vestibulum porttitor
+                            nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
+                            commodo pulvinar dui,
+                            at cursus metus imperdiet vel.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <ul class="icons">
+                <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+            </ul>
+        </div>
+        <div class="copyright">
+            &copy; Untitled. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.poptrox.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
+    <script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/0.0.9/eon.js"></script>
+
+    <!-- map script -->
+    <script>
+        var ActiveMarkers = [];
+        var BendingMarkers = [];
+        var fulfilledMarkers = [];
+        var flag = false;
+        $(document).ready(function () {
+            drawMap();
+        });
+
+        function drawMap() {
+            var mapProp = {
+                center: new google.maps.LatLng(26.8350261, 26.3846187),
+                zoom: 3,
+            };
+            var map = new google.maps.Map(document.getElementById("disaster-map"), mapProp);
+            console.log("map created");
+            setInterval(function () {
+                $.ajax({
+                    url: 'http://18.217.146.148:3000/api/queries/getActiveDisaster',
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        for (var i = 0; i < data.length; i++) {
+                            var latlngStr = data[i].location.split(',', 2);
+                            var latlng = {
+                                lat: parseFloat(latlngStr[0]),
+                                lng: parseFloat(latlngStr[1])
+                            };
+                            ActiveMarkers[i] = new google.maps.Marker({
+                                position: latlng,
+                                animation: google.maps.Animation.BOUNCE,
+                                title: "ACTIVE"
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    complete: function () {
+                        $.ajax({
+                            url: 'http://18.217.146.148:3000/api/queries/getBendingDisaster',
+                            type: "GET",
+                            success: function (data) {
+                                console.log(data);
+                                for (var i = 0; i < data.length; i++) {
+                                    var latlngStr = data[i].location.split(',', 2);
+                                    var latlng = {
+                                        lat: parseFloat(latlngStr[0]),
+                                        lng: parseFloat(latlngStr[1])
+                                    };
+                                    BendingMarkers[i] = new google.maps.Marker({
+                                        position: latlng,
+                                        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                                        title: "Pending"
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                console.log(error);
+                            },
+                            complete: function () {
+                                $.ajax({
+                                    url: 'http://18.217.146.148:3000/api/queries/getFulfilledDisaster',
+                                    type: "GET",
+                                    success: function (data) {
+                                        console.log(data);
+                                        for (var i = 0; i < data.length; i++) {
+                                            var latlngStr = data[i].location.split(',',2);
+                                            var latlng = {
+                                                lat: parseFloat(latlngStr[0]),
+                                                lng: parseFloat(latlngStr[1])
+                                            };
+                                            fulfilledMarkers[i] = new google.maps.Marker({
+                                                position: latlng,
+                                                icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                                                title: "fulfilled"
+                                            });
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    },
+                                    complete: function () {
+                                        if (flag) {
+                                            for (var i = 0; i < 20; i++) {
+                                                ActiveMarkers[i].setMap(null);
+                                                BendingMarkers[i].setMap(null);
+                                                fulfilledMarkers[i].setMap(null);
+                                            }
+                                        }
+                                        for (var i = 0; i < ActiveMarkers.length; i++) {                                            
+                                            ActiveMarkers[i].setMap(map);
+                                        }
+                                        for (var i = 0; i < BendingMarkers.length; i++) {
+                                            BendingMarkers[i].setMap(map);
+                                        }
+                                        for (var i = 0; i <fulfilledMarkers.length; i++) {
+                                            fulfilledMarkers[i].setMap(map);
+                                        }
+                                        flag = true;
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            }, 5000);
+
+        }
+    </script>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCj9B_lUMBxSpH4xamTurUOMNi9daqrjsU&callback=initialize"></script>
+
+</body>
+
+</html>
