@@ -37,41 +37,17 @@
             <!-- Two -->
             <section id="two" class="wrapper style2">
                 <header>
-                    <h2>Supply Status</h2>
+                    <h2>KEEP TRACK OF EVERYTHING</h2>
                     <p>know everything about our network</p>
                 </header>
-                <div class="content">
-                    <div class="gallery">
-                        <div>
-                            <div>
-                                <div style="width: 100%; height: 300px; background-color: white;"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div style="width: 100%; height: 300px; background-color: red;"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div style="width: 100%; height: 300px; background-color: red;"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div style="width: 100%; height: 300px; background-color: white;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- Three -->
             <section id="three" class="wrapper">
                 <div class="spotlight">
-                    <div class="image flush"><img src="CFCimages/pic6.jpg" alt="" /></div>
+                    <div id="chart1"></div>
                     <div class="inner">
-                        <h3>Automated Solution</h3>
+                        <h3>Blood supplies</h3>
                         <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
                             Vestibulum porttitor
                             nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
@@ -80,20 +56,20 @@
                     </div>
                 </div>
                 <div class="spotlight alt">
-                    <div class="image flush"><img src="CFCimages/pic26.jpg" alt="" /></div>
                     <div class="inner">
-                        <h3>End-to-End Tracking</h3>
+                        <h3>Food supplies</h3>
                         <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
                             Vestibulum porttitor
                             nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
                             commodo pulvinar dui,
                             at cursus metus imperdiet vel.</p>
                     </div>
+                    <div id="chart2"></div>
                 </div>
                 <div class="spotlight">
-                    <div class="image flush"><img src="CFCimages/pic27.jpg" alt="" /></div>
+                    <div id="chart3"></div>
                     <div class="inner">
-                        <h3>Chatbot</h3>
+                        <h3>Meds supplies</h3>
                         <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
                             Vestibulum porttitor
                             nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
@@ -130,6 +106,118 @@
     <script src="assets/js/dashboard.js"></script>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
     <script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/0.0.9/eon.js"></script>
+
+    <script>
+            var pubnub = PUBNUB.init({
+                publish_key: 'demo',
+                subscribe_key: 'demo'
+            });
+            var bloodSupplies={}, foodSupplies={}, medSupplies={};
+            setInterval(function () {
+
+                $.ajax({
+                    url: 'http://18.217.146.148:3000/api/queries/getStoreSupplies',
+                    type: "GET",
+                    success: function(data){
+                        for(var i=0; i< data.length; i++){
+                            if(data[i].supplyType == "BLOOD"){
+                                var owner = data[i].owner.split('#', 2)[1];
+                                var amount = data[i].amount;
+                                bloodSupplies[owner] = amount ;
+                            }
+                            if(data[i].supplyType == "FOOD"){
+                                var owner = data[i].owner.split('#', 2)[1];
+                                var amount = data[i].amount;
+                                foodSupplies[owner] = amount ;
+                            }
+                            if(data[i].supplyType == "MEDS"){
+                                var owner = data[i].owner.split('#', 2)[1];
+                                var amount = data[i].amount;
+                                medSupplies[owner] = amount ;
+                            }
+                        }
+                    },
+                    error: function(error){
+                        console.log(error);
+                    },
+                    complete: function(){
+                        pubnub.publish({
+                            channel: 'blood-channel',
+                            message: {
+                                eon: bloodSupplies
+                            }
+                        });
+                        pubnub.publish({
+                            channel: 'food-channel',
+                            message: {
+                                eon: foodSupplies
+                            }
+                        });
+                        pubnub.publish({
+                            channel: 'meds-channel',
+                            message: {
+                                eon: medSupplies
+                            }
+                        });
+                    }
+                });
+            }, 5000);
+    
+            eon.chart({
+                channel: "blood-channel",
+                generate: {
+                    bindto: '#chart1',
+                    data: {
+                        labels: true,
+                        type: 'donut' // type: 'bar'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.5
+                        }
+                    },
+                    tooltip: {
+                        show: false
+                    }
+                }
+            });
+            eon.chart({
+                channel: "food-channel",
+                generate: {
+                    bindto: '#chart2',
+                    data: {
+                        labels: true,
+                        type: 'bar' // type: 'donut'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.8
+                        }
+                    },
+                    tooltip: {
+                        show: false
+                    }
+                }
+            });
+            eon.chart({
+                channel: "meds-channel",
+                generate: {
+                    bindto: '#chart3',
+                    data: {
+                        labels: true,
+                        type: 'donut'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.5
+                        }
+                    },
+                    tooltip: {
+                        show: false
+                    }
+                }
+            });
+        </script>    
 
     <!-- map script -->
     <script>
