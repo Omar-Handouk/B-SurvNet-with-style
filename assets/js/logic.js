@@ -1,8 +1,8 @@
-const ActiveDisasterUrl = 'http://18.217.146.148:3000/api/queries/getActiveDisaster';
-const StoreSupplyUrl = 'http://18.217.146.148:3000/api/queries/getStoreSupplies';
-const ReceiverUrl = 'http://18.217.146.148:3000/api/Receiver';
-const reportUrl = 'http://18.217.146.148:3000/api/CreateDisaster';
-const AcceptedSendSupplyUrl = 'http://18.217.146.148:3000/api/AcceptedSendSupply';
+const ActiveDisasterUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getActiveDisaster';
+const StoreSupplyUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getStoreSupplies';
+const ReceiverUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/Receiver';
+const reportUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/CreateDisaster';
+const AcceptedSendSupplyUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/AcceptedSendSupply';
 
 var activeDisasters = [];
 var storeSupplies = [];

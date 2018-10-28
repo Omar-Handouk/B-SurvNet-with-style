@@ -129,7 +129,7 @@
         setInterval(function () {
 
             $.ajax({
-                url: 'http://18.217.146.148:3000/api/queries/getStoreSupplies',
+                url: 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getStoreSupplies',
                 type: "GET",
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
@@ -245,13 +245,13 @@
         function drawMap() {
             var mapProp = {
                 center: new google.maps.LatLng(26.8350261, 26.3846187),
-                zoom: 3,
+                zoom: 2,
             };
             var map = new google.maps.Map(document.getElementById("disaster-map"), mapProp);
             console.log("map created");
             setInterval(function () {
                 $.ajax({
-                    url: 'http://18.217.146.148:3000/api/queries/getActiveDisaster',
+                    url: 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getActiveDisaster',
                     type: "GET",
                     success: function (data) {
                         console.log(data);
@@ -273,7 +273,7 @@
                     },
                     complete: function () {
                         $.ajax({
-                            url: 'http://18.217.146.148:3000/api/queries/getBendingDisaster',
+                            url: 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getBendingDisaster',
                             type: "GET",
                             success: function (data) {
                                 console.log(data);
@@ -295,7 +295,7 @@
                             },
                             complete: function () {
                                 $.ajax({
-                                    url: 'http://18.217.146.148:3000/api/queries/getFulfilledDisaster',
+                                    url: 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getFulfilledDisaster',
                                     type: "GET",
                                     success: function (data) {
                                         console.log(data);
