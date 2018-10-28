@@ -79,6 +79,16 @@
                 </div>
             </section>
 
+            <!-- One -->
+            <section id="one" class="wrapper style1">
+
+                <header class="special">
+                    <h2>Supply Tracking</h2>
+                    <p>Real-Time tracking of moving supplies</p>
+                    <div id="tracking-map" style="width: 100%; height: 600px;"></div>
+                </header>
+            </section>
+
         </div>
     </section>
 
@@ -109,118 +119,120 @@
 
     <!-- charts script -->
     <script>
-            var pubnub = PUBNUB.init({
-                publish_key: 'demo',
-                subscribe_key: 'demo'
-            });
-            var bloodSupplies={}, foodSupplies={}, medSupplies={};
-            setInterval(function () {
+        var pubnub = PUBNUB.init({
+            publish_key: 'demo',
+            subscribe_key: 'demo'
+        });
+        var bloodSupplies = {},
+            foodSupplies = {},
+            medSupplies = {};
+        setInterval(function () {
 
-                $.ajax({
-                    url: 'http://18.217.146.148:3000/api/queries/getStoreSupplies',
-                    type: "GET",
-                    success: function(data){
-                        for(var i=0; i< data.length; i++){
-                            if(data[i].supplyType == "BLOOD"){
-                                var owner = data[i].owner.split('#', 2)[1];
-                                var amount = data[i].amount;
-                                bloodSupplies[owner] = amount ;
-                            }
-                            if(data[i].supplyType == "FOOD"){
-                                var owner = data[i].owner.split('#', 2)[1];
-                                var amount = data[i].amount;
-                                foodSupplies[owner] = amount ;
-                            }
-                            if(data[i].supplyType == "MEDS"){
-                                var owner = data[i].owner.split('#', 2)[1];
-                                var amount = data[i].amount;
-                                medSupplies[owner] = amount ;
-                            }
+            $.ajax({
+                url: 'http://18.217.146.148:3000/api/queries/getStoreSupplies',
+                type: "GET",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].supplyType == "BLOOD") {
+                            var owner = data[i].owner.split('#', 2)[1];
+                            var amount = data[i].amount;
+                            bloodSupplies[owner] = amount;
                         }
-                    },
-                    error: function(error){
-                        console.log(error);
-                    },
-                    complete: function(){
-                        pubnub.publish({
-                            channel: 'blood-channel',
-                            message: {
-                                eon: bloodSupplies
-                            }
-                        });
-                        pubnub.publish({
-                            channel: 'food-channel',
-                            message: {
-                                eon: foodSupplies
-                            }
-                        });
-                        pubnub.publish({
-                            channel: 'meds-channel',
-                            message: {
-                                eon: medSupplies
-                            }
-                        });
-                    }
-                });
-            }, 5000);
-    
-            eon.chart({
-                channel: "blood-channel",
-                generate: {
-                    bindto: '#chart1',
-                    data: {
-                        labels: true,
-                        type: 'donut' // type: 'bar'
-                    },
-                    bar: {
-                        width: {
-                            ratio: 0.5
+                        if (data[i].supplyType == "FOOD") {
+                            var owner = data[i].owner.split('#', 2)[1];
+                            var amount = data[i].amount;
+                            foodSupplies[owner] = amount;
                         }
-                    },
-                    tooltip: {
-                        show: false
+                        if (data[i].supplyType == "MEDS") {
+                            var owner = data[i].owner.split('#', 2)[1];
+                            var amount = data[i].amount;
+                            medSupplies[owner] = amount;
+                        }
                     }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                complete: function () {
+                    pubnub.publish({
+                        channel: 'blood-channel',
+                        message: {
+                            eon: bloodSupplies
+                        }
+                    });
+                    pubnub.publish({
+                        channel: 'food-channel',
+                        message: {
+                            eon: foodSupplies
+                        }
+                    });
+                    pubnub.publish({
+                        channel: 'meds-channel',
+                        message: {
+                            eon: medSupplies
+                        }
+                    });
                 }
             });
-            eon.chart({
-                channel: "food-channel",
-                generate: {
-                    bindto: '#chart2',
-                    data: {
-                        labels: true,
-                        type: 'bar' // type: 'donut'
-                    },
-                    bar: {
-                        width: {
-                            ratio: 0.8
-                        }
-                    },
-                    tooltip: {
-                        show: false
-                    }
-                }
-            });
-            eon.chart({
-                channel: "meds-channel",
-                generate: {
-                    bindto: '#chart3',
-                    data: {
-                        labels: true,
-                        type: 'donut'
-                    },
-                    bar: {
-                        width: {
-                            ratio: 0.5
-                        }
-                    },
-                    tooltip: {
-                        show: false
-                    }
-                }
-            });
-        </script>    
+        }, 5000);
 
-    <!-- map script -->
+        eon.chart({
+            channel: "blood-channel",
+            generate: {
+                bindto: '#chart1',
+                data: {
+                    labels: true,
+                    type: 'donut' // type: 'bar'
+                },
+                bar: {
+                    width: {
+                        ratio: 0.5
+                    }
+                },
+                tooltip: {
+                    show: false
+                }
+            }
+        });
+        eon.chart({
+            channel: "food-channel",
+            generate: {
+                bindto: '#chart2',
+                data: {
+                    labels: true,
+                    type: 'bar' // type: 'donut'
+                },
+                bar: {
+                    width: {
+                        ratio: 0.8
+                    }
+                },
+                tooltip: {
+                    show: false
+                }
+            }
+        });
+        eon.chart({
+            channel: "meds-channel",
+            generate: {
+                bindto: '#chart3',
+                data: {
+                    labels: true,
+                    type: 'donut'
+                },
+                bar: {
+                    width: {
+                        ratio: 0.5
+                    }
+                },
+                tooltip: {
+                    show: false
+                }
+            }
+        });
+    </script>
+
+    <!-- disaster map script -->
     <script>
         var ActiveMarkers = [];
         var BendingMarkers = [];
@@ -288,16 +300,20 @@
                                     success: function (data) {
                                         console.log(data);
                                         for (var i = 0; i < data.length; i++) {
-                                            var latlngStr = data[i].location.split(',',2);
+                                            var latlngStr = data[i].location
+                                                .split(',', 2);
                                             var latlng = {
-                                                lat: parseFloat(latlngStr[0]),
-                                                lng: parseFloat(latlngStr[1])
+                                                lat: parseFloat(
+                                                    latlngStr[0]),
+                                                lng: parseFloat(
+                                                    latlngStr[1])
                                             };
-                                            fulfilledMarkers[i] = new google.maps.Marker({
-                                                position: latlng,
-                                                icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                                                title: "fulfilled"
-                                            });
+                                            fulfilledMarkers[i] = new google
+                                                .maps.Marker({
+                                                    position: latlng,
+                                                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                                                    title: "fulfilled"
+                                                });
                                         }
                                     },
                                     error: function (error) {
@@ -306,18 +322,22 @@
                                     complete: function () {
                                         if (flag) {
                                             for (var i = 0; i < 20; i++) {
-                                                ActiveMarkers[i].setMap(null);
-                                                BendingMarkers[i].setMap(null);
-                                                fulfilledMarkers[i].setMap(null);
+                                                ActiveMarkers[i].setMap(
+                                                    null);
+                                                BendingMarkers[i].setMap(
+                                                    null);
+                                                fulfilledMarkers[i].setMap(
+                                                    null);
                                             }
                                         }
-                                        for (var i = 0; i < ActiveMarkers.length; i++) {                                            
+                                        for (var i = 0; i < ActiveMarkers.length; i++) {
                                             ActiveMarkers[i].setMap(map);
                                         }
                                         for (var i = 0; i < BendingMarkers.length; i++) {
                                             BendingMarkers[i].setMap(map);
                                         }
-                                        for (var i = 0; i <fulfilledMarkers.length; i++) {
+                                        for (var i = 0; i <
+                                            fulfilledMarkers.length; i++) {
                                             fulfilledMarkers[i].setMap(map);
                                         }
                                         flag = true;
@@ -334,8 +354,67 @@
         }
     </script>
 
+    <!-- tracking map script -->
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService;
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            var map = new google.maps.Map(document.getElementById('tracking-map'), {
+                zoom: 6,
+                center: {
+                    lat: 41.85,
+                    lng: -87.65
+                }
+            });
+            directionsDisplay.setMap(map);
+            calculateAndDisplayRoute(directionsService, directionsDisplay);
+            alerts(map);
+        }
 
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCj9B_lUMBxSpH4xamTurUOMNi9daqrjsU&callback=initialize"></script>
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+            var waypts = [];
+            waypts.push({
+                location: "Alexandaria",
+                stopover: true
+            });
+            directionsService.route({
+                origin: " Cairo", //origin=41.43206,-81.38992
+                destination: "Giza",
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                    var route = response.routes[0];
+                    var summaryPanel = document.getElementById('directions-panel');
+                    summaryPanel.innerHTML = '';
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+
+        }
+        //start,end,position,
+        function alerts(map) {
+            var cascadiaFault = new google.maps.Polyline({
+                path: [
+                    new google.maps.LatLng(30.044281, 31.340002),
+                    new google.maps.LatLng(30.013056, 32.208853),
+
+                ]
+            });
+            var position = new google.maps.LatLng(30.044281, 31.340002);
+
+            cascadiaFault.setMap(map);
+
+            if (google.maps.geometry.poly.isLocationOnEdge(position, cascadiaFault, 10e-1)) {
+
+            } else {
+                alert("Out of Route!");
+            }
+        }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCj9B_lUMBxSpH4xamTurUOMNi9daqrjsU&callback=initMap"></script>
 
 </body>
 
