@@ -137,11 +137,11 @@
         var bloodSupplies = {},
             foodSupplies = {},
             medSupplies = {};
-            allSupplies = {
-                "BLOOD": "",
-                "FOOD" : "",
-                "MEDS" : ""
-            };
+        allSupplies = {
+            "BLOOD": "",
+            "FOOD": "",
+            "MEDS": ""
+        };
         setInterval(function () {
 
             $.ajax({
@@ -150,25 +150,28 @@
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].supplyType == "BLOOD") {
-                            console.log(data[i].owner);
+                            allSupplies = {
+                                "BLOOD": 0,
+                                "FOOD": 0,
+                                "MEDS": 0
+                            };
+                            console.log(data[i]);
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             bloodSupplies[owner] = amount;
-                            allSupplies["BLOOD"] = amount;
+                            allSupplies["BLOOD"] += amount;
                         }
                         if (data[i].supplyType == "FOOD") {
-                            console.log(data[i].owner);
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             foodSupplies[owner] = amount;
-                            allSupplies["FOOD"] = amount;
-                            console.log(owner, amount);
+                            allSupplies["FOOD"] += amount;
                         }
                         if (data[i].supplyType == "MEDS") {
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             medSupplies[owner] = amount;
-                            allSupplies["MEDS"] = amount;
+                            allSupplies["MEDS"] += amount;
                         }
                     }
                 },
