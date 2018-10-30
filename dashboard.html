@@ -77,6 +77,17 @@
                             at cursus metus imperdiet vel.</p>
                     </div>
                 </div>
+                <div class="spotlight alt">
+                    <div class="inner">
+                        <h3>All supplies</h3>
+                        <p>Curabitur eget semper ante. Morbi eleifend ultricies est, a blandit diam vehicula vel.
+                            Vestibulum porttitor
+                            nisi quis viverra hendrerit. Suspendisse vel volutpat nibh, vel elementum lacus. Maecenas
+                            commodo pulvinar dui,
+                            at cursus metus imperdiet vel.</p>
+                    </div>
+                    <div id="chart4"></div>
+                </div>
             </section>
 
             <!-- One -->
@@ -126,6 +137,11 @@
         var bloodSupplies = {},
             foodSupplies = {},
             medSupplies = {};
+            allSupplies = {
+                "BLOOD": "",
+                "FOOD" : "",
+                "MEDS" : ""
+            };
         setInterval(function () {
 
             $.ajax({
@@ -134,19 +150,25 @@
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].supplyType == "BLOOD") {
+                            console.log(data[i].owner);
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             bloodSupplies[owner] = amount;
+                            allSupplies["BLOOD"] = amount;
                         }
                         if (data[i].supplyType == "FOOD") {
+                            console.log(data[i].owner);
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             foodSupplies[owner] = amount;
+                            allSupplies["FOOD"] = amount;
+                            console.log(owner, amount);
                         }
                         if (data[i].supplyType == "MEDS") {
                             var owner = data[i].owner.split('#', 2)[1];
                             var amount = data[i].amount;
                             medSupplies[owner] = amount;
+                            allSupplies["MEDS"] = amount;
                         }
                     }
                 },
@@ -172,10 +194,34 @@
                             eon: medSupplies
                         }
                     });
+                    pubnub.publish({
+                        channel: 'allSupplies-channel',
+                        message: {
+                            eon: allSupplies
+                        }
+                    });
                 }
             });
         }, 5000);
 
+        eon.chart({
+            channel: "allSupplies-channel",
+            generate: {
+                bindto: '#chart4',
+                data: {
+                    labels: true,
+                    type: 'bar'
+                },
+                bar: {
+                    width: {
+                        ratio: 0.8
+                    }
+                },
+                tooltip: {
+                    show: false
+                }
+            }
+        });
         eon.chart({
             channel: "blood-channel",
             generate: {
