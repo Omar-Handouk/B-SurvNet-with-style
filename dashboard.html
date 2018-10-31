@@ -405,65 +405,235 @@
 
     <!-- tracking map script -->
     <script>
-        function initMap() {
-            var directionsService = new google.maps.DirectionsService;
-            var directionsDisplay = new google.maps.DirectionsRenderer;
-            var map = new google.maps.Map(document.getElementById('tracking-map'), {
-                zoom: 6,
-                center: {
-                    lat: 41.85,
-                    lng: -87.65
-                }
-            });
-            directionsDisplay.setMap(map);
-            calculateAndDisplayRoute(directionsService, directionsDisplay);
-            alerts(map);
-        }
-
-        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-            var waypts = [];
-            waypts.push({
-                location: "Alexandaria",
-                stopover: true
-            });
-            directionsService.route({
-                origin: " Cairo", //origin=41.43206,-81.38992
-                destination: "Giza",
-                travelMode: 'DRIVING'
-            }, function (response, status) {
-                if (status === 'OK') {
-                    directionsDisplay.setDirections(response);
-                    var route = response.routes[0];
-                    var summaryPanel = document.getElementById('directions-panel');
-                    summaryPanel.innerHTML = '';
-                } else {
-                    window.alert('Directions request failed due to ' + status);
-                }
-            });
-
-        }
-        //start,end,position,
-        function alerts(map) {
-            var cascadiaFault = new google.maps.Polyline({
-                path: [
-                    new google.maps.LatLng(30.044281, 31.340002),
-                    new google.maps.LatLng(30.013056, 32.208853),
-
-                ]
-            });
-            var position = new google.maps.LatLng(30.044281, 31.340002);
-
-            cascadiaFault.setMap(map);
-
-            if (google.maps.geometry.poly.isLocationOnEdge(position, cascadiaFault, 10e-1)) {
-
-            } else {
-                alert("Out of Route!");
+            const ActiveDisasterUrl =
+                'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getActiveDisaster';
+            const StoreSupplyUrl =
+                'http://survival-network-rest-server-smart-panda.mybluemix.net/api/queries/getStoreSupplies';
+            const ReceiverUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/Receiver';
+            const SupplierUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/Supplier';
+            const reportUrl = 'http://survival-network-rest-server-smart-panda.mybluemix.net/api/CreateDisaster';
+            const AcceptedSendSupplyUrl =
+                'http://survival-network-rest-server-smart-panda.mybluemix.net/api/AcceptedSendSupply';
+    
+            start = {
+                lat: 42.7835129,
+                lng: 12.3976763
+            };
+            end = {
+                lat: 27.1770325,
+                lng: 31.1669085
+            };
+            center = {
+                lat: 42.7808053,
+                lng: 12.4077397
             }
-        }
-    </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCj9B_lUMBxSpH4xamTurUOMNi9daqrjsU&callback=initMap"></script>
+            var minLngRec = 10000,
+                minLatRec = 10000;
+    
+            var minLngSup = 10000,
+                minLatSup = 10000;
+    
+            var activeDisaster = {};
+            var receivers = {};
+            var storeSupplies = {};
+            var supplierLocation = {};
+            var suppliers;
+            var closestSupplier;
+            var closestReceiver;
+    
+            function getClosest() {
+                $.ajax({
+                    url: ActiveDisasterUrl,
+                    type: "GET",
+                    success: function (data) {
+                        activeDisaster = data[0];
+                        center.lat = parseFloat(data[0].location.split(",")[0]);
+                        center.lng = parseFloat(data[0].location.split(",")[1]);
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    },
+                    complete: function (status, error, result) {
+                        if (status.status != 200) {
+                            alert(status.responseText);
+                        } else {
+                            $.ajax({
+                                url: ReceiverUrl,
+                                type: "GET",
+                                success: function (data) {
+                                    closestReceiver = find_closest_marker(activeDisaster.location.split(",")[0], activeDisaster.location.split(",")[1], data);
+                                },
+                                error: function (error) {
+                                    console.log(error)
+                                },
+                                complete: function (status, error, result) {
+                                    if (status.status != 200) {
+                                        alert(status.responseText);
+                                    } else {
+                                        getClosest2();
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+    
+    
+            function getClosest2() {
+                $.ajax({
+                    url: SupplierUrl,
+                    type: "GET",
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            suppliers = data;
+                            supplierLocation[data[i].orgId] = data[i].location;
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    },
+                    complete: function (status, error, result) {
+                        if (status.status != 200) {
+                            alert(status.responseText);
+                        } else {
+                            $.ajax({
+                                url: StoreSupplyUrl,
+                                type: "GET",
+                                success: function (data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        storeSupplies[data[i].owner.split("#")[1]] = data[i].supplyType;
+                                    }
+                                },
+                                error: function (error) {
+                                    console.log(error)
+                                },
+                                complete: function (status,
+                                    error, result) {
+                                    if (status.status != 200) {
+                                        alert(status.responseText);
+                                    } else {
+                                        for (var key in storeSupplies) {
+                                            if (activeDisaster.suppliesTypeNeeded[0] == storeSupplies[key]) {
+                                                closestSupplier = find_closest_marker(closestReceiver.location.split(",")[0],closestReceiver.location.split(",")[1],suppliers);
+                                            }
+                                        }
+                                        console.log(closestSupplier);
+                                        start.lat = parseFloat(closestSupplier.location.split(",")[0]);
+                                        start.lng = parseFloat(closestSupplier.location.split(",")[1]);
+                                        end.lat = parseFloat(closestReceiver.location.split(",")[0]);
+                                        end.lng = parseFloat(closestReceiver.location.split(",")[1]);
+                                        console.log("start: ");
+                                        console.log(start);
+                                        console.log("end: ");
+                                        console.log(end);
+                                        initMap();
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+    
+    
+            getClosest();
+    
+            function rad(x) {
+                return x * Math.PI / 180;
+            }
+    
+            function find_closest_marker(lat, lng, jsonArr) {
+                // var lat = event.latLng.lat();
+                // var lng = event.latLng.lng();
+                var R = 6371; // radius of earth in km
+                var distances = [];
+                var out;
+                var closest = -1;
+                for (i = 0; i < jsonArr.length; i++) {
+                    var mlat = jsonArr[i].location.split(",")[0];
+                    var mlng = jsonArr[i].location.split(",")[1];
+                    var dLat = rad(mlat - lat);
+                    var dLong = rad(mlng - lng);
+                    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    var d = R * c;
+                    distances[i] = d;
+                    if (closest == -1 || d < distances[closest]) {
+                        closest = i;
+                        out = jsonArr[i];
+                    }
+                }
+    
+                return out;
+            }
+    
+            function initMap() {
+                var directionsService = new google.maps.DirectionsService;
+                var directionsDisplay = new google.maps.DirectionsRenderer;
+                var map = new google.maps.Map(document.getElementById('tracking-map'), {
+                    zoom: 6,
+                    center: center
+                });
+                directionsDisplay.setMap(map);
+    
+                calculateAndDisplayRoute(directionsService, directionsDisplay, start, end);
+                google.maps.event.addDomListener(window, 'load', alerts);
+            }
+    
+            function calculateAndDisplayRoute(directionsService, directionsDisplay, start, end) {
+    
+    
+                directionsService.route({
+                    origin: start,
+                    destination: end,
+                    travelMode: 'DRIVING'
+                }, function (response, status) {
+                    if (status === 'OK') {
+                        directionsDisplay.setDirections(response);
+                        var route = response.routes[0];
+                        var summaryPanel = document.getElementById('directions-panel');
+                        summaryPanel.innerHTML = '';
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                });
+    
+            }
+            //start,end,position,
+            function alerts() {
+                var Coords = [{
+                        lat: 50,
+                        lng: 30
+                    },
+                    {
+                        lat: 50,
+                        lng: 40
+                    },
+                    {
+                        lat: 60,
+                        lng: 30
+                    },
+                    {
+                        lat: 60,
+                        lng: 40
+                    }
+                ];
+    
+                var bermudaTriangle = new google.maps.Polygon({
+                    paths: Coords
+                });
+                var myPosition = new google.maps.LatLng(55, 35);
+                if (!google.maps.geometry.poly.containsLocation(myPosition, bermudaTriangle)) {
+                    alert("Out of Route");
+                }
+    
+            }
+        </script>
+    
+    
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBQ2ceeY7Pe72QCbTn2mcshWmgLHO9r2Hw&callback=initMap"></script>
 
 </body>
 
