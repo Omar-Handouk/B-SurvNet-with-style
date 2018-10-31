@@ -8,35 +8,35 @@ var activeDisasters = [];
 var storeSupplies = [];
 var receivers = [];
 
-$(document).ready(function () {
-    setInterval(function () {
+$(document).ready(function () { // Document Ready
+    setInterval(function () { // periodic Function used to fetch active disasters, stores and receivers
         console.log("check is on...");
-        $.ajax({
+        $.ajax({ // AJAX request for getting active disaster - TODO: Replace with $.get
             url: ActiveDisasterUrl,
             type: "GET",
             success: function (data) {
-                if (data.length > 0) {
-                    console.log(data.length + " disaster detected!")
-                    for (var i = 0; i < data.length; i++) {
-                        activeDisasters[i] = data[i].disasterId;
+                if (data.length > 0) { // Check if Disaster Registry contains disasters
+                    console.log(data.length + " disaster detected!");
+                    for (var i = 0; i < data.length; i++) { // Loop used to pull disasters into an array <<Used to fetch other information>>
+                        activeDisasters[i] = data[i].disasterId; // Get Disaster ID
                     }
-                    $.ajax({
+                    $.ajax({ // AJAX request for getting active disaster - TODO: replace with $.get
                         url: StoreSupplyUrl,
                         type: "GET",
                         success: function (data) {
                             console.log(data.length + " supplies detected!");
                             for (var i = 0; i < data.length; i++) {
-                                storeSupplies[i] = data[i].supplyId;
+                                storeSupplies[i] = data[i].supplyId; // Get supply ID
                             }
-                            $.ajax({
+                            $.ajax({ // AJAX request used to fetch suppliers. IMPORTANT: This with the three other AJAX calls used to push into the notification
                                 url: ReceiverUrl,
                                 type: "GET",
                                 success: function (data) {
                                     console.log(data.length + " receivers found!");
                                     for (var i = 0; i < data.length; i++) {
-                                        receivers[i] = data[i].orgId;
+                                        receivers[i] = data[i].orgId; // Get the ID of the Receivers' Orgs
                                     }
-                                    openSendForm();
+                                    openSendForm(); // Used to render the notification
                                 },
                                 error: function (error) {
                                     console.log(error);
@@ -59,8 +59,8 @@ $(document).ready(function () {
         })
     }, 5000);
 
-    $('#report-form').submit(function () {
-        var tst = sumbitReport();
+    $('#report-form').submit(function () { // Report Disasters Form
+        var tst = submitReport();
         $.ajax({
             url: reportUrl,
             type: "POST",
@@ -85,9 +85,9 @@ $(document).ready(function () {
         return false;
     });
 
-    $('#send-form').submit(function () {
-        var tst = sumbitSend();
-        $.ajax({
+    $('#send-form').submit(function () { // Disaster Notification Form
+        var tst = submitSend();
+        $.ajax({ // TODO: Change to AJAX POST
             url: AcceptedSendSupplyUrl,
             type: "POST",
             data: tst,
@@ -109,7 +109,7 @@ $(document).ready(function () {
         })
         return false;
     });
-})
+});
 
 function openReportForm() {
     document.getElementById("myReportForm").style.display = "block";
@@ -120,26 +120,29 @@ function closeReportForm() {
 }
 
 function openSendForm() {
+    console.log(activeDisasters);
+    console.log(storeSupplies);
+    console.log(receivers);
     document.getElementById("mySendForm").style.display = "block";
     var disasterOptions = document.getElementById("disaster-drop");
     var receiverOptions = document.getElementById("receiver-drop");
     var supplyOptions = document.getElementById("supply-drop");
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 20; i++) { // Mystery Loop
         disasterOptions.remove(disasterOptions);
         receiverOptions.remove(receiverOptions);
         supplyOptions.remove(supplyOptions);
     }
-    for (var i = 0; i < activeDisasters.length; i++) {
+    for (var i = 0; i < activeDisasters.length; i++) { // Loop used to loop on active disasters
         var option = document.createElement("option");
         option.text = activeDisasters[i];
         disasterOptions.add(option);
     }
-    for (var i = 0; i < receivers.length; i++) {
+    for (var i = 0; i < receivers.length; i++) { // Loop used to Loop on available receivers ??
         var option = document.createElement("option");
         option.text = receivers[i];
         receiverOptions.add(option);
     }
-    for (var i = 0; i < storeSupplies.length; i++) {
+    for (var i = 0; i < storeSupplies.length; i++) { // Loop used to Loop on available supplies - TODO: This part needs to be changed to only available supplies only
         var option = document.createElement("option");
         option.text = storeSupplies[i];
         supplyOptions.add(option);
@@ -150,7 +153,7 @@ function closeSendForm() {
     document.getElementById("mySendForm").style.display = "none";
 }
 
-function sumbitReport() {
+function submitReport() {
     var x = document.getElementById("report-form");
     var text = {
         "disasterId": "",
@@ -164,7 +167,7 @@ function sumbitReport() {
     return text;
 }
 
-function sumbitSend() {
+function submitSend() {
     var x = document.getElementById("send-form");
     var text = {
         "supplyId": "",
