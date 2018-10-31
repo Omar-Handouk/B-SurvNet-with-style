@@ -16,7 +16,7 @@ let receivers = [];
 let receiversInfo = [];
 
 const FETCH_INTERVAL = 10000; // 10s Periodic Check
-const UPDATE_INTERVAL = 900000;
+const UPDATE_INTERVAL = 90000;
 
 $(document).ready(function () {
 
