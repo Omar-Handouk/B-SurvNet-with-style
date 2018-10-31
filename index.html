@@ -27,7 +27,7 @@
 				<h1>Disaster detected !</h1>
 				<h2>requested send supply transaction</h2>
 
-				<label for="disasterId"><b>Disaster Id</b></label>
+				<label for="disasterId"><b>Disaster Id</b></label> <!--Change it to be a dropdown-->
 				<select id="disaster-drop" name="disasterId"></select>
 
 				<label for="receiverId"><b>Receiver Id</b></label>
@@ -217,7 +217,7 @@
 			zoom: 5,
 		};
 		var map = new google.maps.Map(document.getElementById("report-map"), mapProp);
-		
+
 		google.maps.event.addListener(map, 'click', function (event) {
 			alert("Disaster location is set to: " + event.latLng);
 			var tstStr = String(event.latLng);
