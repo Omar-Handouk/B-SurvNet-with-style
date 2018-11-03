@@ -51,7 +51,7 @@ $(document).ready(function () {
         $.post(reportUrl, formData,
                 function (data, textStatus, jqXHR) {
                     alert('Incident Report Success');
-                    off();
+                    closeReportForm();
                 },
                 'json'
             )
@@ -276,19 +276,14 @@ function closeSendForm() {
     document.getElementById("mySendForm").style.display = "none";
 }
 
-function on() {
-    document.getElementById("overlay").style.display = "block";
-    var elems = document.getElementsByClassName('hideTemp');
-    for (let v of elems)
-        v.style.display = 'none';
+function openReportForm() {
+    document.getElementById("myReportForm").style.display = "block";
 }
 
-function off() {
-    document.getElementById("overlay").style.display = "none";
-    var elems = document.getElementsByClassName('hideTemp');
-    for (let v of elems)
-        v.style.display = 'initial';
-} 
+function closeReportForm() {
+    document.getElementById("myReportForm").style.display = "none";
+}
+
 
 function submitReport() {
 

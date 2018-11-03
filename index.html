@@ -34,47 +34,13 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/country-region-dropdown-menu/1.2.1/geodatasource-countryflag.min.css">
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/random-js/1.0.8/random.js"></script> -->
 
-
-	<style>
-		#overlay {
-				position: fixed; /* Sit on top of the page content */
-				display: none; /* Hidden by default */
-				width: 100%; /* Full width (cover the whole page) */
-				height: 100%; /* Full height (cover the whole page) */
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-				overflow: auto;
-				z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-				cursor: pointer; /* Add a pointer on hover */
-			}
-	</style>
-
-	<script>
-			function on() {
-					document.getElementById("overlay").style.display = "block";
-					var elems = document.getElementsByClassName('hideTemp');
-					for (let v of elems)
-						v.style.display = 'none';
-				}
-				
-				function off() {
-					document.getElementById("overlay").style.display = "none";
-					var elems = document.getElementsByClassName('hideTemp');
-					for (let v of elems)
-						v.style.display = 'initial';
-				} 
-		</script>
-
 </head>
 
 <body>
 
 	<!-- Header -->
 	<header id="header">
-		<div class="logo hideTemp" style="z-index: -1; position: relative;"><a href="#">B-SurvNet <span>Call For Code</span></a></div>
+		<div class="logo"><a href="#">B-SurvNet <span>Call For Code</span></a></div>
 
 		<div class="form-popup" id="mySendForm">
 			<form class="form-container" id="send-form">
@@ -112,11 +78,11 @@
 
 
 
-		<button  type="button" onclick="on()" class="btn btn-outline-dark btn-lg report-open-button hideTemp" style="
+		<button  type="button" onclick="openReportForm()" class="btn btn-outline-dark btn-lg report-open-button hideTemp" style="
 			margin-bottom: 50px;
 			height: 119.33333999999999px;
 			width: 636.6666px;
-		font-size:50px;font-weight:bold; z-index: -1; position: relative;">
+		font-size:50px;font-weight:bold;">
 			Report Disaster</button>
 
 		<a href="./dashboard.html">
@@ -124,10 +90,10 @@
 				margin-bottom: 50px;
 				height: 119.33333999999999px;
 				width: 636.6666px;
-			font-size:50px;font-weight:bold; z-index: -1; position: relative;">Dashboard</button></a>
+			font-size:50px;font-weight:bold;">Dashboard</button></a>
 	</header>
 
-	<div class="form-popup" id="overlay">
+	<div class="form-popup" id="myReportForm">
 		<form class="form-container" id="report-form">
 			<h1>Report Disaster</h1>
 
@@ -159,7 +125,7 @@
 
 			<br>
 
-			<button type="button" class="btn cancel" onclick="off()">Close</button>
+			<button type="button" class="btn cancel" onclick="closeReportForm()">Close</button>
 		</form>
 	</div>
 
