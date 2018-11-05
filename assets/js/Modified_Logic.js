@@ -326,13 +326,15 @@ function Random(seed) {
     if (this._seed <= 0) this._seed += 2147483646;
 }
 
-
 Random.prototype.next = function () {
     return this._seed = this._seed * 16807 % 2147483647;
 };
 
-
-
 Random.prototype.nextFloat = function (opt_minOrMax, opt_max) {
     return (this.next() - 1) / 2147483646;
 };
+
+function getRandomID()
+{
+    return ((new Random(Math.floor(Math.random() * 2147483647))).next());
+}

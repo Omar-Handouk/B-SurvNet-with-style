@@ -104,7 +104,7 @@
 			<label for="disasterType"><b>Disaster Type</b></label>
 			<!-- <input type="text" placeholder="Enter disaster type" name="disasterType" required> -->
 			<select class="form-control" name="disasterType" id="Disaster" required>
-				<option selected disabled label="Select Disaster Type">Select Disaster Type</option>
+				<option selected disabled label="Disaster ">Select Disaster Type</option>
 				<option>flood</option>
 				<option>earthquake</option>
 				<option>tsunami</option>
@@ -240,74 +240,7 @@
 	</footer>
 
 
-	//https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBQ2ceeY7Pe72QCbTn2mcshWmgLHO9r2Hw&callback=initMap
-	<!-- <script>
-		var mapProp;
-		var map;
-
-		function initMap() {
-			mapProp = {
-				center: new google.maps.LatLng(26.8350261, 26.3846187),
-				zoom: 5,
-			};
-			map = new google.maps.Map(document.getElementById("report-map"), mapProp);
-		}
-	</script> -->
-	<script>
-		//Set up some of our variables.
-		var map; //Will contain map object.
-		var marker = false; ////Has the user plotted their location marker? 
-
-		//Function called to initialize / create the map.
-		//This is called when the page has loaded.
-		function initMap() {
-
-			//The center location of our map.
-			var centerOfMap = new google.maps.LatLng(52.357971, -6.516758);
-
-			//Map options.
-			var options = {
-				center: centerOfMap, //Set center.
-				zoom: 3 //The zoom value.
-			};
-
-			//Create the map object.
-			map = new google.maps.Map(document.getElementById('report-map'), options);
-
-			//Listen for any clicks on the map.
-			google.maps.event.addListener(map, 'click', function (event) {
-				//Get the location that the user clicked.
-				var clickedLocation = event.latLng;
-				//If the marker hasn't been added.
-				if (marker === false) {
-					//Create the marker.
-					marker = new google.maps.Marker({
-						position: clickedLocation,
-						map: map,
-						draggable: true //make it draggable
-					});
-					//Listen for drag events!
-					google.maps.event.addListener(marker, 'dragend', function (event) {
-						markerLocation();
-					});
-				} else {
-					//Marker has already been added, so just change its location.
-					marker.setPosition(clickedLocation);
-				}
-				//Get the marker's location.
-				markerLocation();
-			});
-		}
-
-		//This function will get the marker's current location and then add the lat/long
-		//values to our textfields so that we can save the location.
-		function markerLocation() {
-			//Get location.
-			var currentLocation = marker.getPosition();
-			//Add lat and lng values to a field that we can save.
-			document.getElementById('markerLocation').value = currentLocation.lat() + ',' + currentLocation.lng(); //latitude
-		}
-	</script>
+	<script src="assets/js/map.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBQ2ceeY7Pe72QCbTn2mcshWmgLHO9r2Hw&callback=initMap"></script>
 	<!-- <script>
 		google.maps.event.addListener(map, 'click', function (event) {
