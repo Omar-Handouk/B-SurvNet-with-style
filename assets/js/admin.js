@@ -40,7 +40,7 @@ $(() => {
 
                     $('#registryForm').append('<div class="12u$" style="margin-bottom: 50px"><input type="text" name="supplierName" id="supplierName" placeholder="Enter Supplier Name" required></div>');
 
-                    $('#registryForm').append('<div id="report-map" style="width: 90%; height: 300px; margin:auto;"></div>');
+                    $('#registryForm').append('<div id="report-map" style="width: 90%; height: 300px; margin-left: 70px;"></div>');
 
                     $('#registryForm').append('<script src="assets/js/map.js"></script>');
 
@@ -59,7 +59,7 @@ $(() => {
 
                     $('#registryForm').append('<div class="12u$" style="margin-bottom: 50px"><input type="text" name="receiverName" id="receiverName" placeholder="Enter Receiver Name" required></div>');
 
-                    $('#registryForm').append('<div id="report-map" style="width: 90%; height: 300px; margin:auto;"></div>');
+                    $('#registryForm').append('<div id="report-map" style="width: 90%; height: 300px; margin-left: 70px;"></div>');
 
                     $('#registryForm').append('<script src="assets/js/map.js"></script>');
 
